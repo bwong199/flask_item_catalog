@@ -1,0 +1,10 @@
+flask
+pymysql
+flask-sqlalchemy
+flask-script
+flask-wtf
+flask-migrate
+py-bcrypt
+python-slugify
+flask-markdown
+Flask-Uploads==0.2.0
