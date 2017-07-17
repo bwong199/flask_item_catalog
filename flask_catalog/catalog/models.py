@@ -24,6 +24,7 @@ class Item(db.Model):
 	publish_date = db.Column(db.DateTime)
 	live = db.Column(db.Boolean)
 	category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+	category= db.relationship('Category', backref=db.backref('items', lazy='dynamic'))
 
 	def __init__(self, catalog, author, title, description, category, slug=None, publish_date=None, live=True):
 		self.catalog_id = catalog.id
@@ -49,4 +50,4 @@ class Category(db.Model):
 		self.title = title
 
 	def __repr__(self):
-		return '<Category %r>' % self.title
+		return self.title
