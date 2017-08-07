@@ -8,3 +8,7 @@ py-bcrypt
 python-slugify
 flask-markdown
 Flask-Uploads==0.2.0
+oauth2
+urllib
+
+

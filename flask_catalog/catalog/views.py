@@ -1,10 +1,11 @@
 from flask_catalog import app
-from flask import render_template, redirect, flash, url_for, session, abort
+from flask import render_template, redirect, flash, url_for, session, abort, jsonify
 from catalog.form import SetupForm, ItemForm
 from flask_catalog import db
 from author.models import Author
 from catalog.models import Catalog, Item, Category
 from author.decorators import login_required, author_required
+import json
 import bcrypt
 from slugify import slugify
 
@@ -65,9 +66,18 @@ def setup():
 			error = "Error creating catalog"
 	return render_template('catalog/setup.html', form=form)
 
+# returns all the items in the first catalog in json
+@app.route('/catalog.json', methods=['GET'])
+def catalog():
+	catalog  = Catalog.query.first()
+	if not catalog:
+		return redirect(url_for('setup'))
+	items = Item.query.filter_by(live=True).order_by(Item.publish_date.desc())
+	return json.dumps({'items': [i.title for i in items]})
+
 @app.route('/items', methods=('GET', 'POST'))
 @author_required
-def post():
+def items():
 	form = ItemForm()
 	if form.validate_on_submit():
 		if form.new_category.data:
@@ -89,7 +99,6 @@ def post():
 		db.session.add(item)
 		db.session.commit()
 		return redirect(url_for('article', slug=slug))
-	print("REDIRECT")
 	return render_template('catalog/items.html', form=form, action="new")
 
 @app.route('/article/<slug>')
@@ -123,3 +132,6 @@ def delete(item_id):
 	db.session.commit()
 	flash('Item deleted')
 	return redirect('/admin')
+
+
+
